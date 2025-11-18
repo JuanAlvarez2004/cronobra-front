@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { evidenceService } from '@/services/evidenceService'
 import { tasksKeys } from './useTasks'
+import { evidenceService } from '@/services/evidenceService'
 
 // Upload evidence mutation
 export const useUploadEvidence = () => {
@@ -18,7 +18,9 @@ export const useUploadEvidence = () => {
     }) => evidenceService.upload(taskId, photo, metadata),
     onSuccess: (_, variables) => {
       // Invalidate task details to refresh evidence list
-      queryClient.invalidateQueries({ queryKey: tasksKeys.detail(variables.taskId) })
+      queryClient.invalidateQueries({
+        queryKey: tasksKeys.detail(variables.taskId),
+      })
     },
   })
 }

@@ -157,7 +157,7 @@ export interface TaskLog {
 export interface ApiError {
   message: string
   statusCode?: number
-  errors?: Record<string, string[]>
+  errors?: Record<string, Array<string>>
 }
 
 export interface MessageResponse {
@@ -174,7 +174,7 @@ export interface PaginationParams {
 }
 
 export interface PaginatedResponse<T> {
-  data: T[]
+  data: Array<T>
   total: number
   page: number
   limit: number

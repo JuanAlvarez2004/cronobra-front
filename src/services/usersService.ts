@@ -1,15 +1,15 @@
-import apiClient from '@/lib/api-client'
 import type {
-  User,
   CreateUserRequest,
-  UpdateUserRequest,
   MessageResponse,
+  UpdateUserRequest,
+  User,
 } from '@/types/api'
+import apiClient from '@/lib/api-client'
 
 export const usersService = {
   // List all users (Only ADMIN)
-  getAll: async (): Promise<User[]> => {
-    const response = await apiClient.get<User[]>('/users')
+  getAll: async (): Promise<Array<User>> => {
+    const response = await apiClient.get<Array<User>>('/users')
     return response.data
   },
 

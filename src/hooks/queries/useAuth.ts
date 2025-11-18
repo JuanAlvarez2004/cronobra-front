@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { authService } from '@/services/authService'
-import { setTokens, clearTokens } from '@/lib/api-client'
 import type { LoginRequest, RegisterRequest } from '@/types/api'
+import { authService } from '@/services/authService'
+import { clearTokens, setTokens } from '@/lib/api-client'
 
 // Query keys
 export const authKeys = {
@@ -27,7 +27,7 @@ export const useLogin = () => {
     onSuccess: (response) => {
       // Store tokens
       setTokens(response.access_token, response.refresh_token)
-      
+
       // Set user in cache
       queryClient.setQueryData(authKeys.me(), response.user)
     },
@@ -49,7 +49,7 @@ export const useLogout = () => {
     mutationFn: async () => {
       // Clear tokens
       clearTokens()
-      
+
       // Clear all queries
       queryClient.clear()
     },

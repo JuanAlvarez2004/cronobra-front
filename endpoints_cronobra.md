@@ -25,9 +25,11 @@ Authorization: Bearer {access_token}
 ### 🔐 Autenticación (Auth)
 
 #### POST `/auth/register`
+
 Registrar un nuevo usuario (Solo debe usarlo ADMIN).
 
 **Request Body:**
+
 ```json
 {
   "name": "string",
@@ -38,6 +40,7 @@ Registrar un nuevo usuario (Solo debe usarlo ADMIN).
 ```
 
 **Responses:**
+
 - `201` - Usuario creado exitosamente
 - `400` - Datos inválidos
 - `409` - Email ya existe
@@ -45,9 +48,11 @@ Registrar un nuevo usuario (Solo debe usarlo ADMIN).
 ---
 
 #### POST `/auth/login`
+
 Iniciar sesión en el sistema.
 
 **Request Body:**
+
 ```json
 {
   "email": "user@example.com",
@@ -56,6 +61,7 @@ Iniciar sesión en el sistema.
 ```
 
 **Response 200:**
+
 ```json
 {
   "access_token": "string",
@@ -71,17 +77,20 @@ Iniciar sesión en el sistema.
 ```
 
 **Responses:**
+
 - `200` - Login exitoso
 - `401` - Credenciales incorrectas
 
 ---
 
 #### GET `/auth/me`
+
 Obtener información del usuario autenticado.
 
 **Headers:** Requiere `Authorization: Bearer {token}`
 
 **Response 200:**
+
 ```json
 {
   "id": 1,
@@ -97,6 +106,7 @@ Obtener información del usuario autenticado.
 ### 👥 Usuarios (Users)
 
 #### GET `/users`
+
 Listar todos los usuarios (Solo ADMIN).
 
 **Headers:** Requiere `Authorization: Bearer {token}`
@@ -106,11 +116,13 @@ Listar todos los usuarios (Solo ADMIN).
 ---
 
 #### POST `/users`
+
 Crear un nuevo usuario (Solo ADMIN).
 
 **Headers:** Requiere `Authorization: Bearer {token}`
 
 **Request Body:**
+
 ```json
 {
   "name": "string",
@@ -125,11 +137,13 @@ Crear un nuevo usuario (Solo ADMIN).
 ---
 
 #### GET `/users/{id}`
+
 Obtener un usuario específico por ID.
 
 **Headers:** Requiere `Authorization: Bearer {token}`
 
 **Parameters:**
+
 - `id` (path, integer) - ID del usuario
 
 **Response 200:** Objeto User
@@ -137,14 +151,17 @@ Obtener un usuario específico por ID.
 ---
 
 #### PATCH `/users/{id}`
+
 Editar información de un usuario (Solo ADMIN).
 
 **Headers:** Requiere `Authorization: Bearer {token}`
 
 **Parameters:**
+
 - `id` (path, integer) - ID del usuario
 
 **Request Body:**
+
 ```json
 {
   "name": "string",
@@ -157,14 +174,17 @@ Editar información de un usuario (Solo ADMIN).
 ---
 
 #### DELETE `/users/{id}`
+
 Eliminar un usuario (Solo ADMIN).
 
 **Headers:** Requiere `Authorization: Bearer {token}`
 
 **Parameters:**
+
 - `id` (path, integer) - ID del usuario
 
 **Response 200:**
+
 ```json
 {
   "message": "string"
@@ -176,6 +196,7 @@ Eliminar un usuario (Solo ADMIN).
 ### 📅 Cronogramas (Schedules)
 
 #### GET `/schedules`
+
 Listar todos los cronogramas (Solo ADMIN).
 
 **Headers:** Requiere `Authorization: Bearer {token}`
@@ -185,11 +206,13 @@ Listar todos los cronogramas (Solo ADMIN).
 ---
 
 #### POST `/schedules`
+
 Crear un nuevo cronograma (Solo ADMIN).
 
 **Headers:** Requiere `Authorization: Bearer {token}`
 
 **Request Body:**
+
 ```json
 {
   "name": "string",
@@ -200,6 +223,7 @@ Crear un nuevo cronograma (Solo ADMIN).
 ```
 
 **Response 201:**
+
 ```json
 {
   "id": 1,
@@ -214,11 +238,13 @@ Crear un nuevo cronograma (Solo ADMIN).
 ---
 
 #### GET `/schedules/{id}`
+
 Obtener un cronograma específico.
 
 **Headers:** Requiere `Authorization: Bearer {token}`
 
 **Parameters:**
+
 - `id` (path, integer) - ID del cronograma
 
 **Response 200:** Objeto Schedule
@@ -226,14 +252,17 @@ Obtener un cronograma específico.
 ---
 
 #### PATCH `/schedules/{id}`
+
 Editar un cronograma (Solo ADMIN).
 
 **Headers:** Requiere `Authorization: Bearer {token}`
 
 **Parameters:**
+
 - `id` (path, integer) - ID del cronograma
 
 **Request Body:**
+
 ```json
 {
   "name": "string",
@@ -248,14 +277,17 @@ Editar un cronograma (Solo ADMIN).
 ---
 
 #### DELETE `/schedules/{id}`
+
 Eliminar un cronograma (Solo ADMIN).
 
 **Headers:** Requiere `Authorization: Bearer {token}`
 
 **Parameters:**
+
 - `id` (path, integer) - ID del cronograma
 
 **Response 200:**
+
 ```json
 {
   "message": "string"
@@ -267,14 +299,17 @@ Eliminar un cronograma (Solo ADMIN).
 ### ✅ Tareas (Tasks)
 
 #### GET `/tasks/{id}`
+
 Ver una tarea específica por ID.
 
 **Headers:** Requiere `Authorization: Bearer {token}`
 
 **Parameters:**
+
 - `id` (path, integer) - ID de la tarea
 
 **Response 200:**
+
 ```json
 {
   "id": 1,
@@ -290,11 +325,13 @@ Ver una tarea específica por ID.
 ---
 
 #### POST `/tasks`
+
 Crear una nueva tarea (Solo ADMIN).
 
 **Headers:** Requiere `Authorization: Bearer {token}`
 
 **Request Body:**
+
 ```json
 {
   "schedule_id": 1,
@@ -310,14 +347,17 @@ Crear una nueva tarea (Solo ADMIN).
 ---
 
 #### PATCH `/tasks/{id}/status`
+
 Cambiar el estado de una tarea (WORKER).
 
 **Headers:** Requiere `Authorization: Bearer {token}`
 
 **Parameters:**
+
 - `id` (path, integer) - ID de la tarea
 
 **Request Body:**
+
 ```json
 {
   "status": "PENDING" | "IN_PROGRESS" | "COMPLETED"
@@ -327,6 +367,7 @@ Cambiar el estado de una tarea (WORKER).
 **Response 200:** Objeto Task actualizado
 
 **Estados disponibles:**
+
 - `PENDING` - Pendiente
 - `IN_PROGRESS` - En progreso
 - `COMPLETED` - Completada
@@ -336,18 +377,22 @@ Cambiar el estado de una tarea (WORKER).
 ### 📸 Evidencias (Evidence)
 
 #### POST `/tasks/{id}/evidence`
+
 Subir foto de evidencia para una tarea (WORKER).
 
 **Headers:** Requiere `Authorization: Bearer {token}`
 
 **Parameters:**
+
 - `id` (path, integer) - ID de la tarea
 
 **Request Body:** `multipart/form-data`
+
 - `photo` (binary) - Archivo de imagen
 - `metadata` (string, opcional) - Metadatos adicionales
 
 **Response 201:**
+
 ```json
 {
   "id": 1,
@@ -362,14 +407,17 @@ Subir foto de evidencia para una tarea (WORKER).
 ### 📋 Logs
 
 #### GET `/tasks/{id}/logs`
+
 Ver historial de cambios de una tarea (Solo ADMIN).
 
 **Headers:** Requiere `Authorization: Bearer {token}`
 
 **Parameters:**
+
 - `id` (path, integer) - ID de la tarea
 
 **Response 200:**
+
 ```json
 [
   {
@@ -388,6 +436,7 @@ Ver historial de cambios de una tarea (Solo ADMIN).
 ## Roles y Permisos
 
 ### ADMIN
+
 - Crear, editar y eliminar usuarios
 - Crear, editar y eliminar cronogramas
 - Crear tareas
@@ -395,6 +444,7 @@ Ver historial de cambios de una tarea (Solo ADMIN).
 - Acceso completo al sistema
 
 ### WORKER
+
 - Ver sus tareas asignadas
 - Cambiar estado de sus tareas
 - Subir evidencias fotográficas

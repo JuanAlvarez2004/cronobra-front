@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { schedulesService } from '@/services/schedulesService'
 import type { CreateScheduleRequest, UpdateScheduleRequest } from '@/types/api'
+import { schedulesService } from '@/services/schedulesService'
 
 // Query keys
 export const schedulesKeys = {
@@ -49,7 +49,9 @@ export const useUpdateSchedule = () => {
       schedulesService.update(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: schedulesKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: schedulesKeys.detail(variables.id) })
+      queryClient.invalidateQueries({
+        queryKey: schedulesKeys.detail(variables.id),
+      })
     },
   })
 }

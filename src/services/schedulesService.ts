@@ -1,15 +1,15 @@
-import apiClient from '@/lib/api-client'
 import type {
-  Schedule,
   CreateScheduleRequest,
-  UpdateScheduleRequest,
   MessageResponse,
+  Schedule,
+  UpdateScheduleRequest,
 } from '@/types/api'
+import apiClient from '@/lib/api-client'
 
 export const schedulesService = {
   // List all schedules (Only ADMIN)
-  getAll: async (): Promise<Schedule[]> => {
-    const response = await apiClient.get<Schedule[]>('/schedules')
+  getAll: async (): Promise<Array<Schedule>> => {
+    const response = await apiClient.get<Array<Schedule>>('/schedules')
     return response.data
   },
 
@@ -26,7 +26,10 @@ export const schedulesService = {
   },
 
   // Update a schedule (Only ADMIN)
-  update: async (id: number, data: UpdateScheduleRequest): Promise<Schedule> => {
+  update: async (
+    id: number,
+    data: UpdateScheduleRequest,
+  ): Promise<Schedule> => {
     const response = await apiClient.patch<Schedule>(`/schedules/${id}`, data)
     return response.data
   },

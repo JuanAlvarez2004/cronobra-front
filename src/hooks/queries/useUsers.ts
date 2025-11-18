@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { usersService } from '@/services/usersService'
 import type { CreateUserRequest, UpdateUserRequest } from '@/types/api'
+import { usersService } from '@/services/usersService'
 
 // Query keys
 export const usersKeys = {
@@ -49,7 +49,9 @@ export const useUpdateUser = () => {
       usersService.update(id, data),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: usersKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: usersKeys.detail(variables.id) })
+      queryClient.invalidateQueries({
+        queryKey: usersKeys.detail(variables.id),
+      })
     },
   })
 }

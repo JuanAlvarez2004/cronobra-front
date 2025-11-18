@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { tasksService } from '@/services/tasksService'
 import type { CreateTaskRequest, UpdateTaskStatusRequest } from '@/types/api'
+import { tasksService } from '@/services/tasksService'
 
 // Query keys
 export const tasksKeys = {
@@ -50,7 +50,9 @@ export const useUpdateTaskStatus = () => {
     mutationFn: ({ id, data }: { id: number; data: UpdateTaskStatusRequest }) =>
       tasksService.updateStatus(id, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: tasksKeys.detail(variables.id) })
+      queryClient.invalidateQueries({
+        queryKey: tasksKeys.detail(variables.id),
+      })
       queryClient.invalidateQueries({ queryKey: tasksKeys.logs(variables.id) })
     },
   })

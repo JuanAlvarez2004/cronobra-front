@@ -1,10 +1,10 @@
-import apiClient from '@/lib/api-client'
 import type {
-  Task,
   CreateTaskRequest,
-  UpdateTaskStatusRequest,
+  Task,
   TaskLog,
+  UpdateTaskStatusRequest,
 } from '@/types/api'
+import apiClient from '@/lib/api-client'
 
 export const tasksService = {
   // Get a specific task by ID
@@ -20,14 +20,17 @@ export const tasksService = {
   },
 
   // Update task status (WORKER)
-  updateStatus: async (id: number, data: UpdateTaskStatusRequest): Promise<Task> => {
+  updateStatus: async (
+    id: number,
+    data: UpdateTaskStatusRequest,
+  ): Promise<Task> => {
     const response = await apiClient.patch<Task>(`/tasks/${id}/status`, data)
     return response.data
   },
 
   // Get task change history (Only ADMIN)
-  getLogs: async (id: number): Promise<TaskLog[]> => {
-    const response = await apiClient.get<TaskLog[]>(`/tasks/${id}/logs`)
+  getLogs: async (id: number): Promise<Array<TaskLog>> => {
+    const response = await apiClient.get<Array<TaskLog>>(`/tasks/${id}/logs`)
     return response.data
   },
 }

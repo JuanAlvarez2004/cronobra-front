@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
 import { isAuthenticated } from '@/lib/api-client'
-import LoginPage from '@/components/LoginPage'
+import LoginPage from '@/components/common/LoginPage'
 
 export const Route = createFileRoute('/_public/login')({
   beforeLoad: async () => {

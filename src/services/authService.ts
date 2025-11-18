@@ -1,10 +1,10 @@
-import apiClient from '@/lib/api-client'
 import type {
-  RegisterRequest,
+  AuthUser,
   LoginRequest,
   LoginResponse,
-  AuthUser,
+  RegisterRequest,
 } from '@/types/api'
+import apiClient from '@/lib/api-client'
 
 export const authService = {
   // Register a new user (Only ADMIN should use this)

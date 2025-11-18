@@ -1,8 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useAuth } from '@/contexts/AuthContext'
 import { UserRole } from '@/types/api'
-import SupervisorDashboard from '@/components/SupervisorDashboard'
-import WorkerDashboard from '@/components/WorkerDashboard'
+import { SupervisorDashboard } from '@/components/dashboards/SupervisorDashboard'
+import { WorkerDashboard } from '@/components/dashboards/WorkerDashboard'
 
 export const Route = createFileRoute('/_authenticated/dashboard')({
   component: DashboardPage,

@@ -1,5 +1,9 @@
-import axios, { AxiosError } from 'axios'
-import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios'
+import axios from 'axios'
+import type {
+  AxiosError,
+  AxiosInstance,
+  InternalAxiosRequestConfig,
+} from 'axios'
 import type { ApiError } from '@/types/api'
 
 // Token storage keys
@@ -26,7 +30,7 @@ apiClient.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error)
-  }
+  },
 )
 
 // Response interceptor - Handle errors and token refresh
@@ -38,7 +42,7 @@ apiClient.interceptors.response.use(
     // If 401 and we have a refresh token, try to refresh
     if (error.response?.status === 401 && originalRequest) {
       const refreshToken = getRefreshToken()
-      
+
       if (refreshToken) {
         try {
           // Clear tokens and redirect to login
@@ -58,13 +62,14 @@ apiClient.interceptors.response.use(
 
     // Format error response
     const apiError: ApiError = {
-      message: error.response?.data?.message || error.message || 'An error occurred',
+      message:
+        error.response?.data?.message || error.message || 'An error occurred',
       statusCode: error.response?.status,
       errors: error.response?.data?.errors,
     }
 
     return Promise.reject(apiError)
-  }
+  },
 )
 
 // Token management functions
