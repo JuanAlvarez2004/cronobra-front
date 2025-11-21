@@ -1,5 +1,5 @@
 import type {
-  AuthUser,
+  User,
   LoginRequest,
   LoginResponse,
   RegisterRequest,
@@ -7,9 +7,22 @@ import type {
 import apiClient from '@/lib/api-client'
 
 export const authService = {
+  // Register a new admin (Public endpoint - to be created in backend)
+  registerAdmin: async (data: {
+    name: string
+    email: string
+    password: string
+  }): Promise<User> => {
+    const response = await apiClient.post<User>('/auth/register-admin', {
+      ...data,
+      role: 'ADMIN',
+    })
+    return response.data
+  },
+
   // Register a new user (Only ADMIN should use this)
-  register: async (data: RegisterRequest): Promise<void> => {
-    const response = await apiClient.post('/auth/register', data)
+  register: async (data: RegisterRequest): Promise<User> => {
+    const response = await apiClient.post<User>('/auth/register', data)
     return response.data
   },
 
@@ -20,8 +33,8 @@ export const authService = {
   },
 
   // Get current authenticated user
-  me: async (): Promise<AuthUser> => {
-    const response = await apiClient.get<AuthUser>('/auth/me')
+  me: async (): Promise<User> => {
+    const response = await apiClient.get<User>('/auth/me')
     return response.data
   },
 }

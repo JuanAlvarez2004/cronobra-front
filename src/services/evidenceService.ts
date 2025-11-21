@@ -9,19 +9,23 @@ export const evidenceService = {
     metadata?: string,
   ): Promise<Evidence> => {
     const formData = new FormData()
-    formData.append('photo', photo)
+    formData.append('file', photo) // Backend expects 'file' parameter
     if (metadata) {
-      formData.append('metadata', metadata)
+      formData.append('description', metadata) // Backend expects 'description' parameter
     }
 
+    // Don't set Content-Type header - let axios set it automatically with boundary
     const response = await apiClient.post<Evidence>(
       `/tasks/${taskId}/evidence`,
       formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      },
+    )
+    return response.data
+  },
+
+  // Get all evidence for a task
+  getByTaskId: async (taskId: number): Promise<Evidence[]> => {
+    const response = await apiClient.get<Evidence[]>(
+      `/tasks/${taskId}/evidence`,
     )
     return response.data
   },

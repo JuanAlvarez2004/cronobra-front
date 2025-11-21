@@ -7,6 +7,12 @@ import type {
 import apiClient from '@/lib/api-client'
 
 export const tasksService = {
+  // Get all tasks
+  getAll: async (): Promise<Task[]> => {
+    const response = await apiClient.get<Task[]>('/tasks')
+    return response.data
+  },
+
   // Get a specific task by ID
   getById: async (id: number): Promise<Task> => {
     const response = await apiClient.get<Task>(`/tasks/${id}`)
