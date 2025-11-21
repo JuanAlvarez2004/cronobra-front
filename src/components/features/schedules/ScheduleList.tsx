@@ -1,7 +1,7 @@
-import { Calendar, Clock } from 'lucide-react'
+import { Calendar } from 'lucide-react'
 import { Card } from '../../ui/card'
 import { Badge } from '../../ui/badge'
-import type { Schedule, Task } from '@routes/index'
+import type { Schedule, Task } from '@/types/api'
 
 interface ScheduleListProps {
   schedules: Array<Schedule>
@@ -39,9 +39,9 @@ export function ScheduleList({
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {schedules.map((schedule) => {
-        const scheduleTasks = tasks.filter((t) => t.scheduleId === schedule.id)
+        const scheduleTasks = tasks.filter((t) => t.schedule_id === schedule.id)
         const completedTasks = scheduleTasks.filter(
-          (t) => t.status === 'APPROVED',
+          (t) => t.status === 'COMPLETED',
         ).length
         const progress =
           scheduleTasks.length > 0
@@ -70,14 +70,9 @@ export function ScheduleList({
                 <div className="flex items-center gap-2 text-sm text-slate-600">
                   <Calendar className="w-4 h-4" />
                   <span>
-                    {formatDate(schedule.startDate)} -{' '}
-                    {formatDate(schedule.endDate)}
+                    {formatDate(schedule.start_date)} -{' '}
+                    {formatDate(schedule.end_date)}
                   </span>
-                </div>
-
-                <div className="flex items-center gap-2 text-sm text-slate-600">
-                  <Clock className="w-4 h-4" />
-                  <span>Creado el {formatDate(schedule.createdAt)}</span>
                 </div>
               </div>
 
