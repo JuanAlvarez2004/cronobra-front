@@ -1,12 +1,11 @@
 import { createContext, useContext } from 'react'
-import { useNavigate } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
-import type { AuthUser, LoginRequest } from '@/types/api'
+import type { User, LoginRequest } from '@/types/api'
 import { useLogin, useLogout, useMe } from '@/hooks/queries/useAuth'
 import { isAuthenticated } from '@/lib/api-client'
 
 interface AuthContextType {
-  user: AuthUser | undefined
+  user: User | undefined
   isLoading: boolean
   isAuthenticated: boolean
   login: (data: LoginRequest) => Promise<void>
@@ -20,8 +19,6 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const navigate = useNavigate()
-
   // Get current user
   const { data: user, isLoading, refetch } = useMe()
 
@@ -32,22 +29,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const logoutMutation = useLogout()
 
   const login = async (data: LoginRequest) => {
-    try {
-      await loginMutation.mutateAsync(data)
-      await refetch()
-      navigate({ to: '/' })
-    } catch (error) {
-      throw error
-    }
+    await loginMutation.mutateAsync(data)
+    await refetch()
+    // Navigation will be handled by the component after successful login
   }
 
   const logout = async () => {
-    try {
-      await logoutMutation.mutateAsync()
-      navigate({ to: '/login' })
-    } catch (error) {
-      throw error
-    }
+    await logoutMutation.mutateAsync()
+    // Navigation will be handled by the component after successful logout
   }
 
   const value: AuthContextType = {

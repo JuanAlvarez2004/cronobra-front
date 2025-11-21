@@ -2,9 +2,11 @@ import axios from 'axios'
 import type {
   AxiosError,
   AxiosInstance,
+  AxiosResponse,
   InternalAxiosRequestConfig,
 } from 'axios'
 import type { ApiError } from '@/types/api'
+import { toSnakeCase, toCamelCase } from './transformers'
 
 // Token storage keys
 const ACCESS_TOKEN_KEY = 'cronobra_access_token'
@@ -13,19 +15,34 @@ const REFRESH_TOKEN_KEY = 'cronobra_refresh_token'
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
-  timeout: Number(import.meta.env.VITE_API_TIMEOUT) || 10000,
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  timeout: Number(import.meta.env.VITE_API_TIMEOUT) || 30000,
+  // Don't set default Content-Type - let it be set based on request data
 })
 
-// Request interceptor - Add JWT token to requests
+// Request interceptor - Add JWT token and transform to camelCase
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    // Add JWT token
     const token = getAccessToken()
     if (token && config.headers) {
       config.headers.Authorization = `Bearer ${token}`
     }
+
+    // Only set Content-Type to application/json if it's not FormData
+    if (!(config.data instanceof FormData) && !config.headers['Content-Type']) {
+      config.headers['Content-Type'] = 'application/json'
+    }
+
+    // Transform request data from snake_case to camelCase for Java backend
+    // Only transform if it's JSON data (not FormData for file uploads)
+    if (
+      config.data &&
+      !(config.data instanceof FormData) &&
+      config.headers['Content-Type'] === 'application/json'
+    ) {
+      config.data = toCamelCase(config.data)
+    }
+
     return config
   },
   (error) => {
@@ -33,9 +50,15 @@ apiClient.interceptors.request.use(
   },
 )
 
-// Response interceptor - Handle errors and token refresh
+// Response interceptor - Transform from camelCase and handle errors
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response: AxiosResponse) => {
+    // Transform response data from camelCase (Java) to snake_case (TypeScript)
+    if (response.data && typeof response.data === 'object') {
+      response.data = toSnakeCase(response.data)
+    }
+    return response
+  },
   async (error: AxiosError<ApiError>) => {
     const originalRequest = error.config
 

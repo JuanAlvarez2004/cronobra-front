@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { CreateTaskRequest, UpdateTaskStatusRequest } from '@/types/api'
+import type { CreateTaskRequest } from '@/types/api'
+import { TaskStatus } from '@/types/api'
 import { tasksService } from '@/services/tasksService'
 
 // Query keys
@@ -10,6 +11,14 @@ export const tasksKeys = {
   details: () => [...tasksKeys.all, 'detail'] as const,
   detail: (id: number) => [...tasksKeys.details(), id] as const,
   logs: (id: number) => [...tasksKeys.detail(id), 'logs'] as const,
+}
+
+// Get all tasks
+export const useTasks = () => {
+  return useQuery({
+    queryKey: tasksKeys.lists(),
+    queryFn: () => tasksService.getAll(),
+  })
 }
 
 // Get task by ID
@@ -47,13 +56,14 @@ export const useUpdateTaskStatus = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: UpdateTaskStatusRequest }) =>
-      tasksService.updateStatus(id, data),
+    mutationFn: ({ taskId, status }: { taskId: number; status: TaskStatus }) =>
+      tasksService.updateStatus(taskId, { status }),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
-        queryKey: tasksKeys.detail(variables.id),
+        queryKey: tasksKeys.detail(variables.taskId),
       })
-      queryClient.invalidateQueries({ queryKey: tasksKeys.logs(variables.id) })
+      queryClient.invalidateQueries({ queryKey: tasksKeys.logs(variables.taskId) })
+      queryClient.invalidateQueries({ queryKey: tasksKeys.lists() })
     },
   })
 }
