@@ -1,12 +1,13 @@
-import { Calendar, CheckCircle, Eye, Image, User, XCircle } from 'lucide-react'
+import { Calendar, CheckCircle, Eye, User as UserIcon, XCircle } from 'lucide-react'
 import { Card } from '../../ui/card'
 import { Badge } from '../../ui/badge'
 import { Button } from '../../ui/button'
-import type { Schedule, Task, Worker } from '@routes/index'
+import type { Schedule, Task, User } from '@/types/api'
+import { TaskStatus } from '@/types/api'
 
 interface TaskListProps {
   tasks: Array<Task>
-  workers: Array<Worker>
+  workers: Array<User>
   schedules?: Array<Schedule>
   onApprove: (taskId: string) => void
   onReject: (taskId: string) => void
@@ -36,11 +37,6 @@ export function TaskList({
         label: 'Completada',
         className: 'bg-green-100 text-green-700',
       },
-      APPROVED: {
-        label: 'Aprobada',
-        className: 'bg-emerald-100 text-emerald-700',
-      },
-      REJECTED: { label: 'Rechazada', className: 'bg-red-100 text-red-700' },
     }
 
     const variant = variants[status]
@@ -60,7 +56,7 @@ export function TaskList({
   }
 
   const isOverdue = (dueDate: string, status: Task['status']) => {
-    if (status === 'APPROVED' || status === 'REJECTED') return false
+    if (status === 'COMPLETED') return false
     return new Date(dueDate) < new Date()
   }
 
@@ -75,9 +71,9 @@ export function TaskList({
   return (
     <div className="space-y-3">
       {tasks.map((task) => {
-        const worker = workers.find((w) => w.id === task.assignedTo)
-        const schedule = schedules?.find((s) => s.id === task.scheduleId)
-        const overdue = isOverdue(task.dueDate, task.status)
+        const worker = workers.find((w) => w.id === task.assigned_to)
+        const schedule = schedules?.find((s) => s.id === task.schedule_id)
+        const overdue = isOverdue(task.due_date, task.status)
 
         return (
           <Card key={task.id} className="p-4">
@@ -115,25 +111,19 @@ export function TaskList({
                 )}
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  <span>Vence: {formatDate(task.dueDate)}</span>
+                  <span>Vence: {formatDate(task.due_date)}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <User className="w-4 h-4" />
+                  <UserIcon className="w-3 h-3" />
                   <span>{worker?.name || 'Sin asignar'}</span>
                 </div>
-                {task.evidence && (
-                  <div className="flex items-center gap-1 text-green-600">
-                    <Image className="w-4 h-4" />
-                    <span>Con evidencia</span>
-                  </div>
-                )}
               </div>
 
-              {task.status === 'COMPLETED' && (
+              {task.status === TaskStatus.COMPLETED && (
                 <div className="flex gap-2 pt-2 border-t border-slate-200">
                   <Button
                     size="sm"
-                    onClick={() => onApprove(task.id)}
+                    onClick={() => onApprove(task.id.toString())}
                     className="flex-1 bg-green-600 hover:bg-green-700"
                   >
                     <CheckCircle className="w-4 h-4 mr-2" />
@@ -142,7 +132,7 @@ export function TaskList({
                   <Button
                     size="sm"
                     variant="destructive"
-                    onClick={() => onReject(task.id)}
+                    onClick={() => onReject(task.id.toString())}
                     className="flex-1"
                   >
                     <XCircle className="w-4 h-4 mr-2" />

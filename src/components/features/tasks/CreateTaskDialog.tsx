@@ -18,20 +18,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../../ui/select'
-import type { Schedule, Task, Worker } from '@routes/index'
+import type { Schedule, User } from '@/types/api'
+import { useCreateTask } from '@/hooks/queries/useTasks'
 
 interface CreateTaskDialogProps {
   open: boolean
   onClose: () => void
-  onCreate: (task: Task) => void
   schedule: Schedule
-  workers: Array<Worker>
+  workers: User[]
 }
 
 export function CreateTaskDialog({
   open,
   onClose,
-  onCreate,
   schedule,
   workers,
 }: CreateTaskDialogProps) {
@@ -40,27 +39,29 @@ export function CreateTaskDialog({
   const [dueDate, setDueDate] = useState('')
   const [assignedTo, setAssignedTo] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const createTask = useCreateTask()
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const now = new Date().toISOString()
-    const newTask: Task = {
-      id: `task-${Date.now()}`,
-      scheduleId: schedule.id,
-      title,
-      description,
-      dueDate,
-      assignedTo,
-      status: 'PENDING',
-      createdAt: now,
-      updatedAt: now,
-    }
+    try {
+      await createTask.mutateAsync({
+        schedule_id: schedule.id,
+        title,
+        description,
+        due_date: dueDate,
+        assigned_to: parseInt(assignedTo),
+      })
 
-    onCreate(newTask)
-    setTitle('')
-    setDescription('')
-    setDueDate('')
-    setAssignedTo('')
+      // Reset form and close dialog
+      setTitle('')
+      setDescription('')
+      setDueDate('')
+      setAssignedTo('')
+      onClose()
+    } catch (error) {
+      console.error('Error creating task:', error)
+    }
   }
 
   const handleClose = () => {
@@ -73,7 +74,7 @@ export function CreateTaskDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md bg-white border-0">
         <DialogHeader>
           <DialogTitle>Crear Nueva Tarea</DialogTitle>
           <DialogDescription>Cronograma: {schedule.name}</DialogDescription>
@@ -120,9 +121,9 @@ export function CreateTaskDialog({
               <SelectTrigger id="task-worker">
                 <SelectValue placeholder="Selecciona un obrero" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className='bg-white border-0'>
                 {workers.map((worker) => (
-                  <SelectItem key={worker.id} value={worker.id}>
+                  <SelectItem key={worker.id} value={worker.id.toString()}>
                     {worker.name}
                   </SelectItem>
                 ))}
@@ -134,8 +135,12 @@ export function CreateTaskDialog({
             <Button type="button" variant="outline" onClick={handleClose}>
               Cancelar
             </Button>
-            <Button type="submit" className="bg-amber-500 hover:bg-amber-600">
-              Crear Tarea
+            <Button 
+              type="submit" 
+              className="bg-amber-500 hover:bg-amber-600"
+              disabled={createTask.isPending}
+            >
+              {createTask.isPending ? 'Creando...' : 'Crear Tarea'}
             </Button>
           </DialogFooter>
         </form>
