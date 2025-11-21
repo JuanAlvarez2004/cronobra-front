@@ -12,11 +12,17 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PublicRegisterRouteImport } from './routes/_public/register'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
 import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/_admin'
+import { Route as AuthenticatedAdminWorkersRouteImport } from './routes/_authenticated/_admin/workers'
+import { Route as AuthenticatedAdminTasksRouteImport } from './routes/_authenticated/_admin/tasks'
 import { Route as AuthenticatedAdminSchedulesRouteImport } from './routes/_authenticated/_admin/schedules'
+import { Route as AuthenticatedAdminTasksIndexRouteImport } from './routes/_authenticated/_admin/tasks.index'
+import { Route as AuthenticatedAdminSchedulesIndexRouteImport } from './routes/_authenticated/_admin/schedules.index'
+import { Route as AuthenticatedAdminTasksTaskIdRouteImport } from './routes/_authenticated/_admin/tasks.$taskId'
 
 const PublicRoute = PublicRouteImport.update({
   id: '/_public',
@@ -30,6 +36,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const PublicRegisterRoute = PublicRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => PublicRoute,
 } as any)
 const PublicLoginRoute = PublicLoginRouteImport.update({
   id: '/login',
@@ -50,26 +61,63 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/_admin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAdminWorkersRoute =
+  AuthenticatedAdminWorkersRouteImport.update({
+    id: '/workers',
+    path: '/workers',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminTasksRoute = AuthenticatedAdminTasksRouteImport.update({
+  id: '/tasks',
+  path: '/tasks',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminSchedulesRoute =
   AuthenticatedAdminSchedulesRouteImport.update({
     id: '/schedules',
     path: '/schedules',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminTasksIndexRoute =
+  AuthenticatedAdminTasksIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAdminTasksRoute,
+  } as any)
+const AuthenticatedAdminSchedulesIndexRoute =
+  AuthenticatedAdminSchedulesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAdminSchedulesRoute,
+  } as any)
+const AuthenticatedAdminTasksTaskIdRoute =
+  AuthenticatedAdminTasksTaskIdRouteImport.update({
+    id: '/$taskId',
+    path: '/$taskId',
+    getParentRoute: () => AuthenticatedAdminTasksRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/tasks': typeof AuthenticatedTasksRoute
+  '/tasks': typeof AuthenticatedAdminTasksRouteWithChildren
   '/login': typeof PublicLoginRoute
-  '/schedules': typeof AuthenticatedAdminSchedulesRoute
+  '/register': typeof PublicRegisterRoute
+  '/schedules': typeof AuthenticatedAdminSchedulesRouteWithChildren
+  '/workers': typeof AuthenticatedAdminWorkersRoute
+  '/tasks/$taskId': typeof AuthenticatedAdminTasksTaskIdRoute
+  '/schedules/': typeof AuthenticatedAdminSchedulesIndexRoute
+  '/tasks/': typeof AuthenticatedAdminTasksIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
-  '/tasks': typeof AuthenticatedTasksRoute
+  '/tasks': typeof AuthenticatedAdminTasksIndexRoute
   '/login': typeof PublicLoginRoute
-  '/schedules': typeof AuthenticatedAdminSchedulesRoute
+  '/register': typeof PublicRegisterRoute
+  '/workers': typeof AuthenticatedAdminWorkersRoute
+  '/tasks/$taskId': typeof AuthenticatedAdminTasksTaskIdRoute
+  '/schedules': typeof AuthenticatedAdminSchedulesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -80,13 +128,37 @@ export interface FileRoutesById {
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
   '/_public/login': typeof PublicLoginRoute
-  '/_authenticated/_admin/schedules': typeof AuthenticatedAdminSchedulesRoute
+  '/_public/register': typeof PublicRegisterRoute
+  '/_authenticated/_admin/schedules': typeof AuthenticatedAdminSchedulesRouteWithChildren
+  '/_authenticated/_admin/tasks': typeof AuthenticatedAdminTasksRouteWithChildren
+  '/_authenticated/_admin/workers': typeof AuthenticatedAdminWorkersRoute
+  '/_authenticated/_admin/tasks/$taskId': typeof AuthenticatedAdminTasksTaskIdRoute
+  '/_authenticated/_admin/schedules/': typeof AuthenticatedAdminSchedulesIndexRoute
+  '/_authenticated/_admin/tasks/': typeof AuthenticatedAdminTasksIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/tasks' | '/login' | '/schedules'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/tasks'
+    | '/login'
+    | '/register'
+    | '/schedules'
+    | '/workers'
+    | '/tasks/$taskId'
+    | '/schedules/'
+    | '/tasks/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/tasks' | '/login' | '/schedules'
+  to:
+    | '/'
+    | '/dashboard'
+    | '/tasks'
+    | '/login'
+    | '/register'
+    | '/workers'
+    | '/tasks/$taskId'
+    | '/schedules'
   id:
     | '__root__'
     | '/'
@@ -96,7 +168,13 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard'
     | '/_authenticated/tasks'
     | '/_public/login'
+    | '/_public/register'
     | '/_authenticated/_admin/schedules'
+    | '/_authenticated/_admin/tasks'
+    | '/_authenticated/_admin/workers'
+    | '/_authenticated/_admin/tasks/$taskId'
+    | '/_authenticated/_admin/schedules/'
+    | '/_authenticated/_admin/tasks/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -128,6 +206,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_public/register': {
+      id: '/_public/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof PublicRegisterRouteImport
+      parentRoute: typeof PublicRoute
+    }
     '/_public/login': {
       id: '/_public/login'
       path: '/login'
@@ -156,6 +241,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/_admin/workers': {
+      id: '/_authenticated/_admin/workers'
+      path: '/workers'
+      fullPath: '/workers'
+      preLoaderRoute: typeof AuthenticatedAdminWorkersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/_admin/tasks': {
+      id: '/_authenticated/_admin/tasks'
+      path: '/tasks'
+      fullPath: '/tasks'
+      preLoaderRoute: typeof AuthenticatedAdminTasksRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/_admin/schedules': {
       id: '/_authenticated/_admin/schedules'
       path: '/schedules'
@@ -163,15 +262,72 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminSchedulesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/_admin/tasks/': {
+      id: '/_authenticated/_admin/tasks/'
+      path: '/'
+      fullPath: '/tasks/'
+      preLoaderRoute: typeof AuthenticatedAdminTasksIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminTasksRoute
+    }
+    '/_authenticated/_admin/schedules/': {
+      id: '/_authenticated/_admin/schedules/'
+      path: '/'
+      fullPath: '/schedules/'
+      preLoaderRoute: typeof AuthenticatedAdminSchedulesIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminSchedulesRoute
+    }
+    '/_authenticated/_admin/tasks/$taskId': {
+      id: '/_authenticated/_admin/tasks/$taskId'
+      path: '/$taskId'
+      fullPath: '/tasks/$taskId'
+      preLoaderRoute: typeof AuthenticatedAdminTasksTaskIdRouteImport
+      parentRoute: typeof AuthenticatedAdminTasksRoute
+    }
   }
 }
 
+interface AuthenticatedAdminSchedulesRouteChildren {
+  AuthenticatedAdminSchedulesIndexRoute: typeof AuthenticatedAdminSchedulesIndexRoute
+}
+
+const AuthenticatedAdminSchedulesRouteChildren: AuthenticatedAdminSchedulesRouteChildren =
+  {
+    AuthenticatedAdminSchedulesIndexRoute:
+      AuthenticatedAdminSchedulesIndexRoute,
+  }
+
+const AuthenticatedAdminSchedulesRouteWithChildren =
+  AuthenticatedAdminSchedulesRoute._addFileChildren(
+    AuthenticatedAdminSchedulesRouteChildren,
+  )
+
+interface AuthenticatedAdminTasksRouteChildren {
+  AuthenticatedAdminTasksTaskIdRoute: typeof AuthenticatedAdminTasksTaskIdRoute
+  AuthenticatedAdminTasksIndexRoute: typeof AuthenticatedAdminTasksIndexRoute
+}
+
+const AuthenticatedAdminTasksRouteChildren: AuthenticatedAdminTasksRouteChildren =
+  {
+    AuthenticatedAdminTasksTaskIdRoute: AuthenticatedAdminTasksTaskIdRoute,
+    AuthenticatedAdminTasksIndexRoute: AuthenticatedAdminTasksIndexRoute,
+  }
+
+const AuthenticatedAdminTasksRouteWithChildren =
+  AuthenticatedAdminTasksRoute._addFileChildren(
+    AuthenticatedAdminTasksRouteChildren,
+  )
+
 interface AuthenticatedAdminRouteChildren {
-  AuthenticatedAdminSchedulesRoute: typeof AuthenticatedAdminSchedulesRoute
+  AuthenticatedAdminSchedulesRoute: typeof AuthenticatedAdminSchedulesRouteWithChildren
+  AuthenticatedAdminTasksRoute: typeof AuthenticatedAdminTasksRouteWithChildren
+  AuthenticatedAdminWorkersRoute: typeof AuthenticatedAdminWorkersRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
-  AuthenticatedAdminSchedulesRoute: AuthenticatedAdminSchedulesRoute,
+  AuthenticatedAdminSchedulesRoute:
+    AuthenticatedAdminSchedulesRouteWithChildren,
+  AuthenticatedAdminTasksRoute: AuthenticatedAdminTasksRouteWithChildren,
+  AuthenticatedAdminWorkersRoute: AuthenticatedAdminWorkersRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =
@@ -195,10 +351,12 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 
 interface PublicRouteChildren {
   PublicLoginRoute: typeof PublicLoginRoute
+  PublicRegisterRoute: typeof PublicRegisterRoute
 }
 
 const PublicRouteChildren: PublicRouteChildren = {
   PublicLoginRoute: PublicLoginRoute,
+  PublicRegisterRoute: PublicRegisterRoute,
 }
 
 const PublicRouteWithChildren =
