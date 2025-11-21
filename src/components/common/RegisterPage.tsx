@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Building2 } from 'lucide-react'
-import { Link, useNavigate, useSearch } from '@tanstack/react-router'
+import { Building2, ArrowLeft } from 'lucide-react'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { Button } from '../ui/button'
 import {
   Card,
@@ -12,29 +12,49 @@ import {
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 import type { ApiError } from '@/types/api'
-import { useAuth } from '@/contexts/AuthContext'
+import { authService } from '@/services/authService'
 
-export default function LoginPage() {
+export default function RegisterPage() {
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  const { login } = useAuth()
   const navigate = useNavigate()
-  const search = useSearch({ from: '/_public/login' }) as { registered?: string }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+
+    // Validar que las contraseñas coincidan
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden')
+      return
+    }
+
+    // Validar longitud de contraseña
+    if (password.length < 8) {
+      setError('La contraseña debe tener al menos 8 caracteres')
+      return
+    }
+
     setIsLoading(true)
 
     try {
-      await login({ email, password })
-      navigate({ to: '/dashboard' })
+      // Llamar al endpoint de registro público de admin
+      await authService.registerAdmin({
+        name: name.trim(),
+        email: email.trim(),
+        password,
+      })
+
+      // Redirigir al login con mensaje de éxito
+      navigate({ to: '/login', search: { registered: 'true' } })
     } catch (err) {
       const apiError = err as ApiError
-      setError(apiError.message || 'Error al iniciar sesión')
+      setError(apiError.message || 'Error al crear la cuenta')
     } finally {
       setIsLoading(false)
     }
@@ -51,30 +71,37 @@ export default function LoginPage() {
           </div>
           <h1 className="text-3xl font-bold text-slate-900">Cronobra</h1>
           <p className="text-slate-600">
-            Sistema de cronogramas de construcción
+            Crea tu cuenta de administrador
           </p>
         </div>
 
         <Card className="border-slate-200 shadow-xl">
           <CardHeader>
-            <CardTitle>Iniciar Sesión</CardTitle>
+            <CardTitle>Registro de Administrador</CardTitle>
             <CardDescription>
-              Ingresa tus credenciales para continuar
+              Completa el formulario para crear tu cuenta
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {search?.registered === 'true' && (
-                <div className="p-3 text-sm text-green-600 bg-green-50 border border-green-200 rounded-md">
-                  ✓ Cuenta creada exitosamente. Ahora puedes iniciar sesión.
-                </div>
-              )}
-
               {error && (
                 <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
                   {error}
                 </div>
               )}
+
+              <div className="space-y-2">
+                <Label htmlFor="name">Nombre Completo</Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Tu nombre completo"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
 
               <div className="space-y-2">
                 <Label htmlFor="email">Correo Electrónico</Label>
@@ -94,10 +121,25 @@ export default function LoginPage() {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder="Mínimo 8 caracteres"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  minLength={8}
+                  disabled={isLoading}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirmar Contraseña</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="Repite tu contraseña"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  minLength={8}
                   disabled={isLoading}
                 />
               </div>
@@ -107,18 +149,16 @@ export default function LoginPage() {
                 className="w-full bg-amber-500 hover:bg-amber-600"
                 disabled={isLoading}
               >
-                {isLoading ? 'Ingresando...' : 'Ingresar'}
+                {isLoading ? 'Creando cuenta...' : 'Crear Cuenta'}
               </Button>
 
-              <div className="text-center pt-4 border-t border-slate-200">
-                <p className="text-sm text-slate-600 mb-2">
-                  ¿No tienes una cuenta?
-                </p>
+              <div className="text-center">
                 <Link
-                  to="/register"
-                  className="text-sm text-amber-600 hover:text-amber-700 font-medium"
+                  to="/login"
+                  className="inline-flex items-center gap-2 text-sm text-amber-600 hover:text-amber-700"
                 >
-                  Crear cuenta de administrador
+                  <ArrowLeft className="w-4 h-4" />
+                  Volver al inicio de sesión
                 </Link>
               </div>
             </form>
