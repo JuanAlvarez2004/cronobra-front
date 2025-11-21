@@ -10,27 +10,33 @@ import {
   DialogTitle,
 } from '../../ui/dialog'
 import { Label } from '../../ui/label'
-import type { Task } from '@routes/index'
+import type { Task } from '@/types/api'
+import { useUploadEvidence } from '@/hooks/queries/useEvidence'
+import { useUpdateTaskStatus } from '@/hooks/queries/useTasks'
+import { TaskStatus } from '@/types/api'
 
 interface UploadEvidenceDialogProps {
   open: boolean
   onClose: () => void
   task: Task
-  onUpload: (taskId: string, photoUrl: string) => void
 }
 
 export function UploadEvidenceDialog({
   open,
   onClose,
   task,
-  onUpload,
 }: UploadEvidenceDialogProps) {
   const [preview, setPreview] = useState<string | null>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const uploadEvidence = useUploadEvidence()
+  const updateTaskStatus = useUpdateTaskStatus()
 
   const handleFileChange = (e: React.FormEvent<HTMLInputElement>) => {
     const file = e.currentTarget.files?.[0]
     if (file) {
+      setSelectedFile(file)
       const reader = new FileReader()
       reader.onloadend = () => {
         setPreview(reader.result as string)
@@ -39,27 +45,47 @@ export function UploadEvidenceDialog({
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (preview) {
-      // En una aplicación real, aquí subirías la imagen a Supabase Storage
-      // Por ahora, usamos la preview directamente
-      onUpload(task.id, preview)
+    if (!selectedFile) return
+
+    try {
+      // Upload evidence photo
+      await uploadEvidence.mutateAsync({
+        taskId: task.id,
+        photo: selectedFile, // Hook expects 'photo' parameter
+      })
+
+      // Mark task as completed
+      await updateTaskStatus.mutateAsync({
+        taskId: task.id,
+        status: TaskStatus.COMPLETED,
+      })
+
+      // Reset and close
       setPreview(null)
+      setSelectedFile(null)
+      onClose()
+    } catch (error) {
+      console.error('Error uploading evidence:', error)
     }
   }
 
   const handleClose = () => {
     setPreview(null)
+    setSelectedFile(null)
     onClose()
   }
 
   const handleRemovePhoto = () => {
     setPreview(null)
+    setSelectedFile(null)
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
   }
+
+  const isUploading = uploadEvidence.isPending || updateTaskStatus.isPending
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -123,16 +149,16 @@ export function UploadEvidenceDialog({
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isUploading}>
               Cancelar
             </Button>
             <Button
               type="submit"
-              disabled={!preview}
+              disabled={!preview || isUploading}
               className="bg-green-600 hover:bg-green-700"
             >
               <Upload className="w-4 h-4 mr-2" />
-              Subir y Completar
+              {isUploading ? 'Subiendo...' : 'Subir y Completar'}
             </Button>
           </DialogFooter>
         </form>
