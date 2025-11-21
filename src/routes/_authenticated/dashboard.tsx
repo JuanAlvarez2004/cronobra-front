@@ -1,8 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useAuth } from '@/contexts/AuthContext'
 import { UserRole } from '@/types/api'
-import { SupervisorDashboard } from '@/components/dashboards/SupervisorDashboard'
 import { WorkerDashboard } from '@/components/dashboards/WorkerDashboard'
+import { useEffect } from 'react'
 
 export const Route = createFileRoute('/_authenticated/dashboard')({
   component: DashboardPage,
@@ -10,14 +10,22 @@ export const Route = createFileRoute('/_authenticated/dashboard')({
 
 function DashboardPage() {
   const { user } = useAuth()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    // Redirect ADMIN to schedules page
+    if (user?.role === UserRole.ADMIN) {
+      navigate({ to: '/schedules' })
+    }
+  }, [user, navigate])
 
   if (!user) {
     return <div>Loading...</div>
   }
 
-  // Render different dashboard based on user role
+  // For ADMIN, show loading while redirecting
   if (user.role === UserRole.ADMIN) {
-    return <SupervisorDashboard />
+    return <div>Redirigiendo...</div>
   }
 
   return <WorkerDashboard />

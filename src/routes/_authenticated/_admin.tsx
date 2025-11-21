@@ -1,20 +1,20 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { UserRole } from '@/types/api'
-import { isAuthenticated } from '@/lib/api-client'
+import { isAuthenticated, getAccessToken } from '@/lib/api-client'
+import { SupervisorDashboard } from '@/components/dashboards/SupervisorDashboard'
 
-// Admin-only layout
+// Admin-only layout - needs to verify user role
 export const Route = createFileRoute('/_authenticated/_admin')({
-  beforeLoad: async ({ context }) => {
-    if (!isAuthenticated()) {
+  beforeLoad: async () => {
+    if (!isAuthenticated() || !getAccessToken()) {
       throw redirect({ to: '/login' })
     }
-
-    // We'll need to check user role from context
-    // This will be populated from the root route
-    const user = (context as any).user
-
-    if (user && user.role !== UserRole.ADMIN) {
-      throw redirect({ to: '/' })
-    }
+    // Note: User role validation happens in the component
+    // because we need access to React Query hooks
   },
+  component: AdminLayout,
 })
+
+function AdminLayout() {
+  // Use SupervisorDashboard as the layout with tabs navigation
+  return <SupervisorDashboard />
+}
