@@ -1,57 +1,40 @@
 import { useState } from 'react'
-import { CheckCircle, Clock, HardHat, LogOut, PlayCircle } from 'lucide-react'
-import { Button } from '../ui/button'
+import { CheckCircle, Clock, PlayCircle } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { WorkerTaskList } from '../features/workers/WorkerTaskList'
 import { UploadEvidenceDialog } from '../features/evidence/UploadEvidenceDialog'
-import type { AppData, Task, User } from '@routes/index'
+import type { Task } from '@/types/api'
+import { TaskStatus } from '@/types/api'
+import { useAuth } from '@/contexts/AuthContext'
+import { useSchedules } from '@/hooks/queries/useSchedules'
+import { useTasks, useUpdateTaskStatus } from '@/hooks/queries/useTasks'
 
-interface WorkerDashboardProps {
-  currentUser: User
-  appData: AppData
-  setAppData: (data: AppData) => void
-  onLogout: () => void
-}
-
-export function WorkerDashboard({
-  currentUser,
-  appData,
-  setAppData,
-  onLogout,
-}: WorkerDashboardProps) {
+export function WorkerDashboard() {
+  const { user: currentUser } = useAuth()
+  
+  // Fetch data from backend using React Query
+  const { data: schedules = [], isLoading: loadingSchedules } = useSchedules()
+  const { data: tasks = [], isLoading: loadingTasks } = useTasks()
+  const updateTaskStatus = useUpdateTaskStatus()
+  
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [showUploadEvidence, setShowUploadEvidence] = useState(false)
 
+  if (!currentUser) {
+    return null
+  }
+
   // Filtrar solo las tareas asignadas al trabajador actual
-  const myTasks = appData.tasks.filter((t) => t.assignedTo === currentUser.id)
+  const myTasks = tasks.filter((t) => t.assigned_to === currentUser.id)
 
-  const pendingTasks = myTasks.filter((t) => t.status === 'PENDING')
-  const inProgressTasks = myTasks.filter((t) => t.status === 'IN_PROGRESS')
-  const completedTasks = myTasks.filter(
-    (t) =>
-      t.status === 'COMPLETED' ||
-      t.status === 'APPROVED' ||
-      t.status === 'REJECTED',
-  )
+  const pendingTasks = myTasks.filter((t) => t.status === TaskStatus.PENDING)
+  const inProgressTasks = myTasks.filter((t) => t.status === TaskStatus.IN_PROGRESS)
+  const completedTasks = myTasks.filter((t) => t.status === TaskStatus.COMPLETED)
 
-  const handleStartTask = (taskId: string) => {
-    const now = new Date().toISOString()
-    setAppData({
-      ...appData,
-      tasks: appData.tasks.map((t) =>
-        t.id === taskId ? { ...t, status: 'IN_PROGRESS', updatedAt: now } : t,
-      ),
-      traceLog: [
-        ...appData.traceLog,
-        {
-          id: `trace-${Date.now()}`,
-          taskId,
-          action: 'STATUS_CHANGED',
-          user: currentUser.name,
-          timestamp: now,
-          details: 'Tarea iniciada - Estado cambió de PENDING a IN_PROGRESS',
-        },
-      ],
+  const handleStartTask = async (taskId: string) => {
+    await updateTaskStatus.mutateAsync({
+      taskId: parseInt(taskId),
+      status: TaskStatus.IN_PROGRESS,
     })
   }
 
@@ -60,60 +43,16 @@ export function WorkerDashboard({
     setShowUploadEvidence(true)
   }
 
-  const handleUploadEvidence = (taskId: string, photoUrl: string) => {
-    const now = new Date().toISOString()
-    setAppData({
-      ...appData,
-      tasks: appData.tasks.map((t) =>
-        t.id === taskId
-          ? {
-              ...t,
-              status: 'COMPLETED',
-              evidence: { photoUrl, uploadedAt: now },
-              updatedAt: now,
-            }
-          : t,
-      ),
-      traceLog: [
-        ...appData.traceLog,
-        {
-          id: `trace-${Date.now()}`,
-          taskId,
-          action: 'EVIDENCE_UPLOADED',
-          user: currentUser.name,
-          timestamp: now,
-          details:
-            'Evidencia fotográfica subida - Tarea completada y esperando aprobación',
-        },
-      ],
-    })
-    setShowUploadEvidence(false)
-    setSelectedTask(null)
+  if (loadingSchedules || loadingTasks) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-slate-600">Cargando...</div>
+      </div>
+    )
   }
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="bg-blue-500 p-2 rounded-lg">
-                <HardHat className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-slate-900">Mis Tareas</h1>
-                <p className="text-sm text-slate-600">{currentUser.name}</p>
-              </div>
-            </div>
-            <Button variant="outline" onClick={onLogout}>
-              <LogOut className="w-4 h-4 mr-2" />
-              Salir
-            </Button>
-          </div>
-        </div>
-      </header>
-
       {/* Stats */}
       <div className="bg-white border-b border-slate-200">
         <div className="container mx-auto px-4 py-6">
@@ -167,7 +106,7 @@ export function WorkerDashboard({
             ) : (
               <WorkerTaskList
                 tasks={pendingTasks}
-                schedules={appData.schedules}
+                schedules={schedules}
                 onStartTask={handleStartTask}
                 onCompleteTask={handleCompleteTask}
               />
@@ -183,7 +122,7 @@ export function WorkerDashboard({
             ) : (
               <WorkerTaskList
                 tasks={inProgressTasks}
-                schedules={appData.schedules}
+                schedules={schedules}
                 onStartTask={handleStartTask}
                 onCompleteTask={handleCompleteTask}
               />
@@ -199,7 +138,7 @@ export function WorkerDashboard({
             ) : (
               <WorkerTaskList
                 tasks={completedTasks}
-                schedules={appData.schedules}
+                schedules={schedules}
                 onStartTask={handleStartTask}
                 onCompleteTask={handleCompleteTask}
               />
@@ -217,7 +156,6 @@ export function WorkerDashboard({
             setSelectedTask(null)
           }}
           task={selectedTask}
-          onUpload={handleUploadEvidence}
         />
       )}
     </div>
