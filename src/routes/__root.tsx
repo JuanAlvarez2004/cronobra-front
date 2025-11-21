@@ -12,7 +12,7 @@ export const Route = createRootRoute({
 })
 
 function RootComponent() {
-  const { data: user } = useMe()
+  useMe()
 
   return (
     <>
