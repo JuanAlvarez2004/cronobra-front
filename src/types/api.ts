@@ -59,14 +59,6 @@ export interface LoginResponse {
   user: User
 }
 
-export interface AuthUser {
-  id: number
-  name: string
-  email: string
-  role: UserRole
-  created_at: string
-}
-
 // ============================================
 // Schedule Types
 // ============================================
@@ -128,8 +120,9 @@ export interface Evidence {
   id: number
   task_id: number
   photo_url: string
-  created_at: string
-  metadata?: string
+  description?: string
+  uploaded_by: number
+  uploaded_at: string
 }
 
 export interface CreateEvidenceRequest {
@@ -143,11 +136,12 @@ export interface CreateEvidenceRequest {
 
 export interface TaskLog {
   id: number
+  task_id: number
+  user_id: number
   action: string
   from_status: TaskStatus | null
   to_status: TaskStatus | null
   timestamp: string
-  user_id: number
 }
 
 // ============================================
@@ -179,4 +173,29 @@ export interface PaginatedResponse<T> {
   page: number
   limit: number
   totalPages: number
+}
+
+// ============================================
+// Trace Log Types (Client-side only)
+// ============================================
+
+export interface TraceLog {
+  id: string
+  taskId: number
+  action: string
+  user: string
+  timestamp: string
+  details: string
+}
+
+// ============================================
+// App Data Types (Client-side state)
+// ============================================
+
+export interface AppData {
+  schedules: Array<Schedule>
+  tasks: Array<Task>
+  workers: Array<User>
+  traceLog: Array<TraceLog>
+  evidence: Array<Evidence>
 }
