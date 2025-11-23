@@ -133,7 +133,7 @@ export function TaskList({
                     size="sm"
                     variant="destructive"
                     onClick={() => onReject(task.id.toString())}
-                    className="flex-1"
+                    className="flex-1 bg-red-600 hover:bg-red-700"
                   >
                     <XCircle className="w-4 h-4 mr-2" />
                     Rechazar

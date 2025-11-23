@@ -99,7 +99,7 @@ function TaskDetailsPage() {
 
   const getUserName = (userId: number) => {
     const user = users.find((u) => u.id === userId)
-    return user?.name || 'Usuario desconocido'
+    return user?.name || 'Trabajador asignado'
   }
 
   return (
