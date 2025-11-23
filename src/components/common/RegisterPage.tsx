@@ -65,7 +65,7 @@ export default function RegisterPage() {
       <div className="w-full max-w-md space-y-6">
         <div className="text-center space-y-2">
           <div className="flex justify-center">
-            <div className="bg-amber-500 p-4 rounded-2xl shadow-lg">
+            <div className="bg-amber-600 p-4 rounded-2xl shadow-lg">
               <Building2 className="w-12 h-12 text-white" />
             </div>
           </div>
@@ -146,7 +146,7 @@ export default function RegisterPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-amber-500 hover:bg-amber-600"
+                className="w-full bg-amber-600 hover:bg-amber-600"
                 disabled={isLoading}
               >
                 {isLoading ? 'Creando cuenta...' : 'Crear Cuenta'}

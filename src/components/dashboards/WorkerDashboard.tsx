@@ -8,6 +8,7 @@ import { TaskStatus } from '@/types/api'
 import { useAuth } from '@/contexts/AuthContext'
 import { useSchedules } from '@/hooks/queries/useSchedules'
 import { useTasks, useUpdateTaskStatus } from '@/hooks/queries/useTasks'
+import { useTabBubbleAnimation } from '@/hooks/useTabBubbleAnimation'
 
 export function WorkerDashboard() {
   const { user: currentUser } = useAuth()
@@ -19,6 +20,11 @@ export function WorkerDashboard() {
   
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [showUploadEvidence, setShowUploadEvidence] = useState(false)
+  const [activeTab, setActiveTab] = useState('pending')
+  
+  const { bubbleRef, tabsListRef, getTabHandlers } = useTabBubbleAnimation({ 
+    activeTab 
+  })
 
   if (!currentUser) {
     return null
@@ -45,57 +51,52 @@ export function WorkerDashboard() {
 
   if (loadingSchedules || loadingTasks) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-slate-600">Cargando...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Stats */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="container mx-auto px-4 py-6">
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center">
-              <div className="flex items-center justify-center mb-2">
-                <Clock className="w-5 h-5 text-slate-500" />
-              </div>
-              <div className="text-slate-900">{pendingTasks.length}</div>
-              <div className="text-sm text-slate-600">Pendientes</div>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center mb-2">
-                <PlayCircle className="w-5 h-5 text-blue-500" />
-              </div>
-              <div className="text-slate-900">{inProgressTasks.length}</div>
-              <div className="text-sm text-slate-600">En Progreso</div>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center mb-2">
-                <CheckCircle className="w-5 h-5 text-green-500" />
-              </div>
-              <div className="text-slate-900">{completedTasks.length}</div>
-              <div className="text-sm text-slate-600">Completadas</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <div className="min-h-screen">
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <Tabs defaultValue="pending" className="space-y-6">
-          <TabsList className="bg-white border border-slate-200 w-full">
-            <TabsTrigger value="pending" className="flex-1">
-              Pendientes ({pendingTasks.length})
-            </TabsTrigger>
-            <TabsTrigger value="in-progress" className="flex-1">
-              En Progreso ({inProgressTasks.length})
-            </TabsTrigger>
-            <TabsTrigger value="completed" className="flex-1">
-              Completadas ({completedTasks.length})
-            </TabsTrigger>
-          </TabsList>
+      <main className="container mx-auto px-4 py-2">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <div ref={tabsListRef} className="relative">
+            {/* Burbuja animada */}
+            <div
+              ref={bubbleRef}
+              className="absolute top-[3px] h-[calc(100%-6px)] border-2 border-amber-600 rounded-xl pointer-events-none opacity-0 z-10"
+              style={{ transition: 'none' }}
+            />
+            
+            <TabsList className="bg-white border border-slate-200 w-full relative">
+              <TabsTrigger 
+                id="tab-pending" 
+                value="pending" 
+                className="flex-1 relative z-10"
+                {...getTabHandlers('pending')}
+              >
+                Pendientes ({pendingTasks.length})
+              </TabsTrigger>
+              <TabsTrigger 
+                id="tab-in-progress" 
+                value="in-progress" 
+                className="flex-1 relative z-10"
+                {...getTabHandlers('in-progress')}
+              >
+                En Progreso ({inProgressTasks.length})
+              </TabsTrigger>
+              <TabsTrigger 
+                id="tab-completed" 
+                value="completed" 
+                className="flex-1 relative z-10"
+                {...getTabHandlers('completed')}
+              >
+                Completadas ({completedTasks.length})
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
           <TabsContent value="pending" className="space-y-4">
             {pendingTasks.length === 0 ? (

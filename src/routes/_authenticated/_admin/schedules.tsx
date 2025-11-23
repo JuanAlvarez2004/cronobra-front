@@ -45,7 +45,7 @@ function SchedulesPage() {
         </div>
         <Button
           onClick={() => setShowCreateSchedule(true)}
-          className="bg-amber-500 hover:bg-amber-600"
+          className="bg-amber-600 hover:bg-amber-600"
         >
           <Plus className="w-4 h-4 mr-2" />
           Nuevo Cronograma
@@ -73,7 +73,7 @@ function SchedulesPage() {
               </div>
               <Button
                 onClick={() => setShowCreateTask(true)}
-                className="bg-amber-500 hover:bg-amber-600"
+                className="bg-amber-600 hover:bg-amber-600"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Nueva Tarea

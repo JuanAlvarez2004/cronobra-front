@@ -121,7 +121,7 @@ export function CreateWorkerDialog({
             </Button>
             <Button
               type="submit"
-              className="bg-amber-500 hover:bg-amber-600"
+              className="bg-amber-600 hover:bg-amber-600"
               disabled={createUser.isPending}
             >
               <UserPlus className="w-4 h-4 mr-2" />

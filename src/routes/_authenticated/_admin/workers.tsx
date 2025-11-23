@@ -36,19 +36,19 @@ function WorkersPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-slate-600">Cargando trabajadores...</div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-3">
-              <div className="bg-amber-500 p-3 rounded-lg">
+              <div className="bg-amber-600 p-3 rounded-lg">
                 <Users className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -62,7 +62,7 @@ function WorkersPage() {
             </div>
             <Button
               onClick={() => setShowCreateWorker(true)}
-              className="bg-amber-500 hover:bg-amber-600"
+              className="bg-amber-600 hover:bg-amber-600"
             >
               <Plus className="w-4 h-4 mr-2" />
               Nuevo Trabajador
@@ -73,7 +73,7 @@ function WorkersPage() {
         {workers.length === 0 ? (
           <Card className="p-12 text-center">
             <div className="flex justify-center mb-4">
-              <div className="bg-slate-100 p-6 rounded-full">
+              <div className="p-6 rounded-full">
                 <Users className="w-12 h-12 text-slate-400" />
               </div>
             </div>
@@ -85,7 +85,7 @@ function WorkersPage() {
             </p>
             <Button
               onClick={() => setShowCreateWorker(true)}
-              className="bg-amber-500 hover:bg-amber-600"
+              className="bg-amber-600 hover:bg-amber-600"
             >
               <Plus className="w-4 h-4 mr-2" />
               Crear Primer Trabajador

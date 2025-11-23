@@ -53,7 +53,7 @@ export function ScheduleList({
         return (
           <Card
             key={schedule.id}
-            className={`p-4 cursor-pointer transition-all hover:shadow-md ${
+            className={`p-4 cursor-pointer transition-all hover:shadow-md bg-white ${
               isSelected ? 'ring-2 ring-amber-500 shadow-md' : ''
             }`}
             onClick={() => onSelectSchedule(schedule)}
@@ -84,9 +84,9 @@ export function ScheduleList({
                       {Math.round(progress)}%
                     </span>
                   </div>
-                  <div className="w-full bg-slate-200 rounded-full h-2">
+                  <div className="w-full rounded-full h-2">
                     <div
-                      className="bg-amber-500 h-2 rounded-full transition-all"
+                      className="bg-amber-600 h-2 rounded-full transition-all"
                       style={{ width: `${progress}%` }}
                     />
                   </div>

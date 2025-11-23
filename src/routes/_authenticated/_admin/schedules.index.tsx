@@ -58,7 +58,7 @@ function SchedulesPage() {
 
   if (loadingSchedules || loadingTasks || loadingUsers || !currentUser) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-slate-600">Cargando...</div>
       </div>
     )
@@ -73,7 +73,7 @@ function SchedulesPage() {
         </div>
         <Button
           onClick={() => setShowCreateSchedule(true)}
-          className="bg-amber-500 hover:bg-amber-600"
+          className="bg-amber-600 hover:bg-amber-600"
         >
           <Plus className="w-4 h-4 mr-2" />
           Nuevo Cronograma
@@ -100,7 +100,7 @@ function SchedulesPage() {
             </div>
             <Button
               onClick={() => setShowCreateTask(true)}
-              className="bg-amber-500 hover:bg-amber-600"
+              className="bg-amber-600 hover:bg-amber-600"
             >
               <Plus className="w-4 h-4 mr-2" />
               Nueva Tarea

@@ -17,15 +17,15 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-sm">
+    <header className="bg-white sticky top-5 z-20 rounded-2xl border-slate-200 shadow-sm m-5">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-amber-500 p-2 rounded-lg">
+            <div className="bg-amber-600 p-2 rounded-lg">
               <CalendarDays className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-slate-900">{`Panel ${user?.role}`}</h1>
+              <h1 className="text-slate-900 font-bold">{`Panel ${user?.role.toLocaleLowerCase()}`}</h1>
               <p className="text-sm text-slate-600">{user?.name}</p>
             </div>
           </div>

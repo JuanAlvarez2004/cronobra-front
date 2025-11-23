@@ -41,24 +41,24 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-transparent flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center space-y-2">
           <div className="flex justify-center">
-            <div className="bg-amber-500 p-4 rounded-2xl shadow-lg">
-              <Building2 className="w-12 h-12 text-white" />
+            <div>
+              <Building2 className="w-12 h-12 text-black" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-slate-900">Cronobra</h1>
+          <h1 className="text-5xl font-bold text-slate-900">Cronobra</h1>
           <p className="text-slate-600">
             Sistema de cronogramas de construcción
           </p>
         </div>
 
-        <Card className="border-slate-200 shadow-xl">
+        <Card className="border-slate-200 shadow-xl bg-white">
           <CardHeader>
-            <CardTitle>Iniciar Sesión</CardTitle>
-            <CardDescription>
+            <CardTitle className='mb-2'>Iniciar Sesión</CardTitle>
+            <CardDescription className='text-xs'>
               Ingresa tus credenciales para continuar
             </CardDescription>
           </CardHeader>
@@ -104,7 +104,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-amber-500 hover:bg-amber-600"
+                className="w-full bg-amber-600 hover:bg-amber-600"
                 disabled={isLoading}
               >
                 {isLoading ? 'Ingresando...' : 'Ingresar'}
@@ -124,10 +124,6 @@ export default function LoginPage() {
             </form>
           </CardContent>
         </Card>
-
-        <p className="text-center text-sm text-slate-500">
-          Sistema Cronobra - Gestión de Obras
-        </p>
       </div>
     </div>
   )

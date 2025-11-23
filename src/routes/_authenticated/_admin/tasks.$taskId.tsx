@@ -130,7 +130,7 @@ function TaskDetailsPage() {
           onClick={() => setActiveTab('details')}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === 'details'
-              ? 'border-blue-500 text-blue-600'
+              ? 'border-amber-500'
               : 'border-transparent text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -140,7 +140,7 @@ function TaskDetailsPage() {
           onClick={() => setActiveTab('evidence')}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === 'evidence'
-              ? 'border-blue-500 text-blue-600'
+              ? 'border-amber-500'
               : 'border-transparent text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -150,7 +150,7 @@ function TaskDetailsPage() {
           onClick={() => setActiveTab('history')}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === 'history'
-              ? 'border-blue-500 text-blue-600'
+              ? 'border-amber-500'
               : 'border-transparent text-slate-600 hover:text-slate-900'
           }`}
         >
@@ -301,7 +301,7 @@ function EvidenceCard({
           onError={() => setImageError(true)}
         />
       ) : (
-        <div className="w-full h-48 bg-slate-100 flex items-center justify-center">
+        <div className="w-full h-48 flex items-center justify-center">
           <Image className="w-12 h-12 text-slate-300" />
         </div>
       )}
@@ -356,7 +356,7 @@ function LogEntry({
   }
 
   return (
-    <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+    <div className="p-4 rounded-lg border border-slate-200">
       <div className="flex items-start justify-between gap-2 mb-1">
         <span className="text-sm font-medium text-slate-900">{userName}</span>
         <span className="text-xs text-slate-500">

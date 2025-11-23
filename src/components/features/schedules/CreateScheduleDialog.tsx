@@ -120,7 +120,7 @@ export function CreateScheduleDialog({
             </Button>
             <Button 
               type="submit" 
-              className="bg-amber-500 hover:bg-amber-600"
+              className="bg-amber-600 hover:bg-amber-600"
               disabled={createSchedule.isPending}
             >
               {createSchedule.isPending ? 'Creando...' : 'Crear Cronograma'}
