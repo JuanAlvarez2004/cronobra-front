@@ -11,6 +11,20 @@ import { AuthProvider } from './contexts/AuthContext'
 import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
 
+// Register service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then(
+      (registration) => {
+        console.log('✅ Service Worker registrado:', registration.scope)
+      },
+      (error) => {
+        console.error('❌ Error al registrar Service Worker:', error)
+      }
+    )
+  })
+}
+
 // Create a client for React Query
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -18,6 +32,13 @@ const queryClient = new QueryClient({
       staleTime: 1000 * 60 * 5, // 5 minutes
       retry: 1,
       refetchOnWindowFocus: false,
+      // Modo offline: usar cache si no hay red
+      networkMode: 'offlineFirst',
+    },
+    mutations: {
+      // Reintentar mutations cuando vuelva la conexión
+      networkMode: 'offlineFirst',
+      retry: 3,
     },
   },
 })

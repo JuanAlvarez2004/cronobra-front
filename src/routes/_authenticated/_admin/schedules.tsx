@@ -25,7 +25,6 @@ function SchedulesPage() {
   const { data: tasks = [], isLoading: loadingTasks } = useTasks()
   const { data: users = [], isLoading: loadingUsers } = useUsers()
   const modelRef = useRef<Group | null>(null)
-  const [modelLoaded, setModelLoaded] = useState(false)
 
   const [showCreateSchedule, setShowCreateSchedule] = useState(false)
   const [showCreateTask, setShowCreateTask] = useState(false)
@@ -36,13 +35,11 @@ function SchedulesPage() {
     if (modelGroup && !modelRef.current) {
       modelRef.current = modelGroup
     }
-    setModelLoaded(true)
   }, [])
 
   // Resetear el estado del modelo cuando cambia el cronograma seleccionado
   useEffect(() => {
     if (selectedSchedule) {
-      setModelLoaded(false)
       modelRef.current = null
     }
   }, [selectedSchedule?.id])

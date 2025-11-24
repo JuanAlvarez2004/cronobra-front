@@ -2,6 +2,8 @@ import { Outlet, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { useMe } from '@/hooks/queries/useAuth'
+import { OfflineBanner } from '@/components/common/OfflineBanner'
+import { InstallPrompt } from '@/components/common/InstallPrompt'
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -16,6 +18,8 @@ function RootComponent() {
 
   return (
     <>
+      <OfflineBanner />
+      <InstallPrompt />
       <Outlet />
       <TanStackDevtools
         config={{
