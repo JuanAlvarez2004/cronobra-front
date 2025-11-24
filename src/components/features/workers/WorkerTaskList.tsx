@@ -59,17 +59,17 @@ export function WorkerTaskList({
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 sm:space-y-4">
       {tasks.map((task) => {
         const schedule = schedules.find((s) => s.id === task.schedule_id)
         const overdue = isOverdue(task.due_date, task.status)
 
         return (
-          <Card key={task.id} className="p-4">
+          <Card key={task.id} className="p-3 sm:p-4 mx-1 sm:mx-0">
             <div className="space-y-3">
               <div className="space-y-2">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className="text-slate-900">{task.title}</h3>
+                  <h3 className="text-sm sm:text-base font-medium text-slate-900 break-words">{task.title}</h3>
                   {getStatusBadge(task.status)}
                   {overdue && (
                     <Badge variant="destructive" className="text-xs">
@@ -77,39 +77,39 @@ export function WorkerTaskList({
                     </Badge>
                   )}
                 </div>
-                <p className="text-sm text-slate-600">{task.description}</p>
+                <p className="text-xs sm:text-sm text-slate-600 break-words">{task.description}</p>
               </div>
 
-              <div className="flex flex-wrap gap-4 text-sm text-slate-600">
+              <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm text-slate-600">
                 {schedule && (
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    <span>{schedule.name}</span>
+                  <div className="flex items-center gap-1.5">
+                    <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                    <span className="truncate">{schedule.name}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  <span>Vence: {formatDate(task.due_date)}</span>
+                <div className="flex items-center gap-1.5">
+                  <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                  <span className="whitespace-nowrap">Vence: {formatDate(task.due_date)}</span>
                 </div>
               </div>
 
               {task.status === 'PENDING' && (
                 <Button
                   onClick={() => onStartTask(task.id.toString())}
-                  className="w-full bg-blue-500 hover:bg-blue-600"
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-sm sm:text-base py-2 sm:py-2.5"
                 >
-                  <PlayCircle className="w-4 h-4 mr-2" />
-                  Iniciar Tarea
+                  <PlayCircle className="w-4 h-4 mr-2 shrink-0" />
+                  <span className="truncate">Iniciar Tarea</span>
                 </Button>
               )}
 
               {task.status === 'IN_PROGRESS' && (
                 <Button
                   onClick={() => onCompleteTask(task)}
-                  className="w-full bg-green-600 hover:bg-green-700"
+                  className="w-full bg-green-600 hover:bg-green-700 text-sm sm:text-base py-2 sm:py-2.5"
                 >
-                  <Upload className="w-4 h-4 mr-2" />
-                  Subir Evidencia y Completar
+                  <Upload className="w-4 h-4 mr-2 shrink-0" />
+                  <span className="truncate">Subir Evidencia y Completar</span>
                 </Button>
               )}
             </div>

@@ -9,9 +9,11 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useSchedules } from '@/hooks/queries/useSchedules'
 import { useTasks, useUpdateTaskStatus } from '@/hooks/queries/useTasks'
 import { useTabBubbleAnimation } from '@/hooks/useTabBubbleAnimation'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 
 export function WorkerDashboard() {
   const { user: currentUser } = useAuth()
+  const isMobile = useMediaQuery()
   
   // Fetch data from backend using React Query
   const { data: schedules = [], isLoading: loadingSchedules } = useSchedules()
@@ -23,7 +25,8 @@ export function WorkerDashboard() {
   const [activeTab, setActiveTab] = useState('pending')
   
   const { bubbleRef, tabsListRef, getTabHandlers } = useTabBubbleAnimation({ 
-    activeTab 
+    activeTab,
+    disabled: isMobile
   })
 
   if (!currentUser) {
@@ -60,49 +63,57 @@ export function WorkerDashboard() {
   return (
     <div className="min-h-screen">
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-2">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+      <main className="container mx-auto px-3 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
           <div ref={tabsListRef} className="relative">
-            {/* Burbuja animada */}
-            <div
-              ref={bubbleRef}
-              className="absolute top-[3px] h-[calc(100%-6px)] border-2 border-amber-600 rounded-xl pointer-events-none opacity-0 z-10"
-              style={{ transition: 'none' }}
-            />
+            {/* Burbuja animada - solo en desktop */}
+            {!isMobile && (
+              <div
+                ref={bubbleRef}
+                className="absolute top-[3px] h-[calc(100%-6px)] border-2 border-amber-600 rounded-xl pointer-events-none opacity-0 z-10"
+                style={{ transition: 'none' }}
+              />
+            )}
             
-            <TabsList className="bg-white border border-slate-200 w-full relative">
+            <TabsList className="bg-white border border-slate-200 w-full relative flex flex-col md:flex-row h-max gap-1 p-1">
               <TabsTrigger 
                 id="tab-pending" 
                 value="pending" 
-                className="flex-1 relative z-10"
+                className="flex-1 relative z-10 text-sm sm:text-base py-2.5 sm:py-2"
                 {...getTabHandlers('pending')}
               >
-                Pendientes ({pendingTasks.length})
+                <span className="hidden sm:inline">Pendientes</span>
+                <span className="sm:hidden">Pend.</span>
+                <span className="ml-1">({pendingTasks.length})</span>
               </TabsTrigger>
               <TabsTrigger 
                 id="tab-in-progress" 
                 value="in-progress" 
-                className="flex-1 relative z-10"
+                className="flex-1 relative z-10 text-sm sm:text-base py-2.5 sm:py-2"
                 {...getTabHandlers('in-progress')}
               >
-                En Progreso ({inProgressTasks.length})
+                <span className="hidden sm:inline">En Progreso</span>
+                <span className="sm:hidden">Progreso</span>
+                <span className="ml-1">({inProgressTasks.length})</span>
               </TabsTrigger>
               <TabsTrigger 
                 id="tab-completed" 
                 value="completed" 
-                className="flex-1 relative z-10"
+                className="flex-1 relative z-10 text-sm sm:text-base py-2.5 sm:py-2"
                 {...getTabHandlers('completed')}
               >
-                Completadas ({completedTasks.length})
+                <span className="hidden sm:inline">Completadas</span>
+                <span className="sm:hidden">Compl.</span>
+                <span className="ml-1">({completedTasks.length})</span>
               </TabsTrigger>
             </TabsList>
           </div>
 
-          <TabsContent value="pending" className="space-y-4">
+          <TabsContent value="pending" className="space-y-3 sm:space-y-4">
             {pendingTasks.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-lg border border-slate-200">
-                <Clock className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-600">No tienes tareas pendientes</p>
+              <div className="text-center py-8 sm:py-12 bg-white rounded-lg border border-slate-200 mx-1 sm:mx-0">
+                <Clock className="w-10 h-10 sm:w-12 sm:h-12 text-slate-300 mx-auto mb-2 sm:mb-3" />
+                <p className="text-sm sm:text-base text-slate-600 px-4">No tienes tareas pendientes</p>
               </div>
             ) : (
               <WorkerTaskList
@@ -114,11 +125,11 @@ export function WorkerDashboard() {
             )}
           </TabsContent>
 
-          <TabsContent value="in-progress" className="space-y-4">
+          <TabsContent value="in-progress" className="space-y-3 sm:space-y-4">
             {inProgressTasks.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-lg border border-slate-200">
-                <PlayCircle className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-600">No tienes tareas en progreso</p>
+              <div className="text-center py-8 sm:py-12 bg-white rounded-lg border border-slate-200 mx-1 sm:mx-0">
+                <PlayCircle className="w-10 h-10 sm:w-12 sm:h-12 text-slate-300 mx-auto mb-2 sm:mb-3" />
+                <p className="text-sm sm:text-base text-slate-600 px-4">No tienes tareas en progreso</p>
               </div>
             ) : (
               <WorkerTaskList
@@ -130,11 +141,11 @@ export function WorkerDashboard() {
             )}
           </TabsContent>
 
-          <TabsContent value="completed" className="space-y-4">
+          <TabsContent value="completed" className="space-y-3 sm:space-y-4">
             {completedTasks.length === 0 ? (
-              <div className="text-center py-12 bg-white rounded-lg border border-slate-200">
-                <CheckCircle className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-                <p className="text-slate-600">No tienes tareas completadas</p>
+              <div className="text-center py-8 sm:py-12 bg-white rounded-lg border border-slate-200 mx-1 sm:mx-0">
+                <CheckCircle className="w-10 h-10 sm:w-12 sm:h-12 text-slate-300 mx-auto mb-2 sm:mb-3" />
+                <p className="text-sm sm:text-base text-slate-600 px-4">No tienes tareas completadas</p>
               </div>
             ) : (
               <WorkerTaskList
