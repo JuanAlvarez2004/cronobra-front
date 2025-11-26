@@ -120,7 +120,7 @@ export function TaskList({
                 </div>
               </div>
 
-              {task.status === TaskStatus.COMPLETED && (
+              {task.status === TaskStatus.IN_PROGRESS && (
                 <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t border-slate-200">
                   <Button
                     size="sm"

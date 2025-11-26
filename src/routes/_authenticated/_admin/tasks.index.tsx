@@ -22,9 +22,15 @@ function TasksPage() {
   const workers = users.filter((u) => u.role === UserRole.WORKER)
 
   const handleApproveTask = async (taskId: string) => {
-    // Ya está completada, no necesitamos cambiarla, solo confirmar
-    // En realidad, la tarea ya está en COMPLETED, este es solo un feedback visual
-    alert('Tarea confirmada como completada ✅')
+    if (!confirm('¿Estás seguro de aprobar esta tarea?')) {
+      return
+    }
+    
+    // Aprobar = pasar a COMPLETED
+    await updateTaskStatus.mutateAsync({
+      taskId: parseInt(taskId),
+      status: TaskStatus.COMPLETED,
+    })
   }
 
   const handleRejectTask = async (taskId: string) => {
